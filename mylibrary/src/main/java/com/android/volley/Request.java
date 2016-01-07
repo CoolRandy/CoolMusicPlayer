@@ -103,6 +103,9 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     /** The retry policy for this request. 请求的重试策略*/
     private RetryPolicy mRetryPolicy;
 
+    /** whether or not this request use gzip  本次请求是否使用gzip压缩*/
+    private boolean mShouldGzip = true;
+
     /**
      * When a request can be retrieved from cache but must be refreshed from
      * the network, the cache entry will be stored here so that in the event of
@@ -647,5 +650,17 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     private static String createIdentifier(final int method, final String url) {
         return InternalUtils.sha1Hash("Request:" + method + ":" + url +
                 ":" + System.currentTimeMillis() + ":" + (sCounter++));
+    }
+
+    /**
+     * 是否压缩
+     * @return
+     */
+    public boolean ismShouldGzip() {
+        return mShouldGzip;
+    }
+
+    public void setmShouldGzip(boolean mShouldGzip) {
+        this.mShouldGzip = mShouldGzip;
     }
 }

@@ -46,6 +46,7 @@ import javax.net.ssl.SSLSocketFactory;
 
 /**
  * An {@link HttpStack} based on {@link HttpURLConnection}.
+ * HttpURLConnection默认内部已经添加的有userAgent，这里构造方法中添加该参数以方便自己定制userAgent
  */
 public class HurlStack implements HttpStack {
 
@@ -110,6 +111,12 @@ public class HurlStack implements HttpStack {
             throws IOException, AuthFailureError {
         String url = request.getUrl();
         HashMap<String, String> map = new HashMap<String, String>();
+        //添加gzip支持以及采用新的userAgent（可选）
+        if(request.ismShouldGzip()){
+            map.put(HEADER_ACCEPT_ENCODING, ENCODING_GZIP);
+        }
+        map.put(USER_AGENT, mUserAgent);//使用默认可以注掉
+        //end
         map.putAll(request.getHeaders());
         map.putAll(additionalHeaders);
         if (mUrlRewriter != null) {
@@ -137,14 +144,29 @@ public class HurlStack implements HttpStack {
         StatusLine responseStatus = new BasicStatusLine(protocolVersion,
                 connection.getResponseCode(), connection.getResponseMessage());
         BasicHttpResponse response = new BasicHttpResponse(responseStatus);
-        if (hasResponseBody(request.getMethod(), responseStatus.getStatusCode())) {
+        if (hasResponseBody(request.getMethod(), responseStatus.getStatusCode())) {//排除一些响应码(如304，10X等)
             response.setEntity(entityFromConnection(connection));
         }
         for (Entry<String, List<String>> header : connection.getHeaderFields().entrySet()) {
             if (header.getKey() != null) {
+                //处理1
                 Header h = new BasicHeader(header.getKey(), header.getValue().get(0));
+                //处理2
+                /*String value = "";
+                for(String head : header.getValue()){
+                    value += head + ";";
+                }
+
+                if(value.length() > 0) {
+                    value = value.substring(0,value.length() - 1);
+                }
+                Header h = new BasicHeader(header.getKey(), value);*/
                 response.addHeader(h);
             }
+        }
+        //set entity  Content-Encoding表明server使用了什么压缩方式压缩响应中的对象
+        if(ENCODING_GZIP.equalsIgnoreCase(connection.getContentEncoding())){
+            response.setEntity(new InflatingEntity(response.getEntity()));
         }
         return response;
     }
@@ -176,6 +198,7 @@ public class HurlStack implements HttpStack {
         } catch (IOException ioe) {
             inputStream = connection.getErrorStream();
         }
+        //根据连接输入流设置实体的相关参数：Content、ContentLength、ContentType以及Content-Encoding
         entity.setContent(inputStream);
         entity.setContentLength(connection.getContentLength());
         entity.setContentEncoding(connection.getContentEncoding());
@@ -200,6 +223,7 @@ public class HurlStack implements HttpStack {
         HttpURLConnection connection = createConnection(url);
 
         int timeoutMs = request.getTimeoutMs();
+        //这些参数需要设置
         connection.setConnectTimeout(timeoutMs);
         connection.setReadTimeout(timeoutMs);
         connection.setUseCaches(false);
@@ -246,7 +270,7 @@ public class HurlStack implements HttpStack {
                 connection.setRequestMethod("DELETE");
                 break;
             case Method.POST:
-                connection.setRequestMethod("POST");
+                connection.setRequestMethod("POST");//跟允许的方法集合中的所有方法比较，看是否包含，不包含则报异常
                 addBodyIfExists(connection, request);//添加实体部分
                 break;
             case Method.PUT:

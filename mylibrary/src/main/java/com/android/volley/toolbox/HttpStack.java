@@ -30,6 +30,12 @@ import java.util.Map;
  * An HTTP stack abstraction.
  */
 public interface HttpStack {
+
+    String HEADER_CONTENT_TYPE = "Content-Type";
+    String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
+    String USER_AGENT = "User-Agent";
+    String ENCODING_GZIP = "gzip";
+    int CONNECTION_TIME_OUT_MS = 15000;
     /**
      * Performs an HTTP request with the given parameters.
      * 用给定的参数执行一个http请求
