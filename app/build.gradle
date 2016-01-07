@@ -37,4 +37,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.2.4'
     compile files('libs/httpclient-android-4.3.3.jar')
     compile 'com.squareup.okhttp:okhttp:2.0.0'
+    compile files('libs/okio-1.6.0.jar')
 }

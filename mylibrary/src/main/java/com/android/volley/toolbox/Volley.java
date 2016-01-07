@@ -23,6 +23,7 @@ import android.os.Build;
 
 import com.android.volley.Network;
 import com.android.volley.RequestQueue;
+import com.android.volley.VolleyLog;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -54,9 +55,11 @@ public class Volley {
      * @return A started {@link RequestQueue} instance.
      */
     public static RequestQueue newRequestQueue(Context context, HttpStack stack, int maxDiskCacheBytes) {
+        //缓存文件
         File cacheDir = new File(context.getCacheDir(), DEFAULT_CACHE_DIR);
         //下面的代码是设置请求头User-Agent 字段，设置形式为packageName/versionCode，这一块是针对HttpClient的，HttpURLConnection 默认是有 User-Agent 的
         //这里注意在2.1后一种可以获取系统默认的User-Agent，另一种就是在自定义的Request中重写getHeaders方法设置User-Agent
+        //uerAgent： 标识请求者的一些信息，如什么浏览器类型和版本、操作系统，使用语言等信息
         String userAgent = "volley/0";
         try {
             String packageName = context.getPackageName();
@@ -100,6 +103,35 @@ public class Volley {
 
         return queue;
     }
+
+    /**
+     * 新建无缓存机制的请求队列  这块用处感觉不是很大？？
+     * @param context
+     * @return
+     */
+    public static RequestQueue newNoCacheRequestQueue(Context context){
+
+        String userAgent = "volley/0";
+        try {
+            String packageName = context.getPackageName();
+            PackageInfo info = context.getPackageManager().getPackageInfo(packageName, 0);
+            userAgent = packageName + "/" + info.versionCode;
+        } catch (NameNotFoundException e) {
+        }
+
+        HttpStack stack = null;
+        if (Build.VERSION.SDK_INT >= 9) {
+            stack = new HurlStack();
+        } else {
+            HttpClient httpClient = HttpClients.custom().setUserAgent(userAgent).build();
+            stack = new HttpClientStack(httpClient);
+        }
+
+        Network network = new BasicNetwork(stack);
+        RequestQueue queue = new RequestQueue(new NoCache(), network);
+        queue.start();
+        return queue;
+    }
     
     /**
      * Creates a default instance of the worker pool and calls {@link RequestQueue#start()} on it.
@@ -133,6 +165,14 @@ public class Volley {
      */
     public static RequestQueue newRequestQueue(Context context) {
         return newRequestQueue(context, null);
+    }
+
+    /**
+     * 判断是否打开log
+     * @param isOpened
+     */
+    public void openLog(boolean isOpened){
+        VolleyLog.DEBUG = isOpened;
     }
 
 }

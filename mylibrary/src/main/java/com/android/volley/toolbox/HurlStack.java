@@ -64,25 +64,36 @@ public class HurlStack implements HttpStack {
 
     private final UrlRewriter mUrlRewriter;
     private final SSLSocketFactory mSslSocketFactory;
+    private final String mUserAgent;
 
-    public HurlStack() {
+    public HurlStack(){
         this(null);
     }
 
-    /**
-     * @param urlRewriter Rewriter to use for request URLs
-     */
-    public HurlStack(UrlRewriter urlRewriter) {
-        this(urlRewriter, null);
+    public HurlStack(String userAgent) {
+        this(null, userAgent);
     }
 
     /**
      * @param urlRewriter Rewriter to use for request URLs
-     * @param sslSocketFactory SSL factory to use for HTTPS connections
      */
-    public HurlStack(UrlRewriter urlRewriter, SSLSocketFactory sslSocketFactory) {
+    public HurlStack(UrlRewriter urlRewriter, String userAgent) {
+        this(urlRewriter, null, userAgent);
+    }
+
+    /**
+     * @param urlRewriter Rewriter to use for request URLs
+     * @param sslSocketFactory SSL factory to use for HTTPS connections  SSL是用于https连接的，安全连接  SSL位于传输层对网络连接进行加密
+     */
+    /*public HurlStack(UrlRewriter urlRewriter, SSLSocketFactory sslSocketFactory) {
         mUrlRewriter = urlRewriter;
         mSslSocketFactory = sslSocketFactory;
+    }*/
+
+    public HurlStack(UrlRewriter urlRewriter, SSLSocketFactory sslSocketFactory, String userAgent){
+        mUrlRewriter = urlRewriter;
+        mSslSocketFactory = sslSocketFactory;
+        mUserAgent = userAgent;
     }
 
     /**
