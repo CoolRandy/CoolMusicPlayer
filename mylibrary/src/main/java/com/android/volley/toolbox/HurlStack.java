@@ -304,6 +304,7 @@ public class HurlStack implements HttpStack {
      */
     private static void addBodyIfExists(HttpURLConnection connection, Request<?> request)
             throws IOException, AuthFailureError {
+        //TODO 上传情况处理
         byte[] body = request.getBody();
         if (body != null) {
             connection.setDoOutput(true);

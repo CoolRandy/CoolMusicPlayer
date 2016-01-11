@@ -75,6 +75,8 @@ public class StringRequest extends Request<String> {
             parsed = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
         } catch (UnsupportedEncodingException e) {
             parsed = new String(response.data);
+        } catch (NullPointerException e){
+            parsed = "";
         }
         return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
     }
