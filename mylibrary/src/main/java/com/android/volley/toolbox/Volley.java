@@ -95,7 +95,7 @@ public class Volley {
         }
         else
         {
-        	// Disk cache size specified
+        	// Disk cache size specified 指定硬盘缓存尺寸
         	queue = new RequestQueue(new DiskBasedCache(cacheDir, maxDiskCacheBytes), network);
         }
         //创建队列完成后，启动该队列

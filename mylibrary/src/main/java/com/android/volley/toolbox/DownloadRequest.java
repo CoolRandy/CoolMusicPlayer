@@ -53,4 +53,11 @@ public class DownloadRequest extends StringRequest {
         }
         return super.getHeaders();
     }
+
+    /**
+     * 停止下载
+     */
+    public void stopDownload(){
+        cancel();
+    }
 }

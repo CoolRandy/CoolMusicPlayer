@@ -44,11 +44,12 @@ import java.util.Map;
  */
 public class DiskBasedCache implements Cache {
 
-    /** Map of the Key, CacheHeader pairs */
+    /** Map of the Key, CacheHeader pairs
+     * 负载因子是0.75，即Map中的数据量达到总容量的75%，其容量空间会自定扩容为原来的1倍*/
     private final Map<String, CacheHeader> mEntries =
             new LinkedHashMap<String, CacheHeader>(16, .75f, true);
 
-    /** Total amount of space currently used by the cache in bytes. */
+    /** Total amount of space currently used by the cache in bytes.缓存使用的空间 */
     private long mTotalSize = 0;
 
     /** The root directory to use for the cache.  用于缓存的根目录*/
@@ -70,6 +71,7 @@ public class DiskBasedCache implements Cache {
      * Constructs an instance of the DiskBasedCache at the specified directory.
      * @param rootDirectory The root directory of the cache.
      * @param maxCacheSizeInBytes The maximum size of the cache in bytes.
+     * 在指定目录创建一个DiskBasedCache实例
      */
     public DiskBasedCache(File rootDirectory, int maxCacheSizeInBytes) {
         mRootDirectory = rootDirectory;
@@ -80,6 +82,7 @@ public class DiskBasedCache implements Cache {
      * Constructs an instance of the DiskBasedCache at the specified directory using
      * the default maximum cache size of 5MB.
      * @param rootDirectory The root directory of the cache.
+     * 使用默认的最大缓存大小创建实例
      */
     public DiskBasedCache(File rootDirectory) {
         this(rootDirectory, DEFAULT_DISK_USAGE_BYTES);
@@ -88,6 +91,7 @@ public class DiskBasedCache implements Cache {
     /**
      * Clears the cache. Deletes all cached files from disk.
      * 清除缓存，删除硬盘上的所有缓存  线程同步：避免在删除某一缓存文件时有其他地方正在使用该文件
+     * 遍历整个目录下的文件
      */
     @Override
     public synchronized void clear() {
@@ -143,6 +147,7 @@ public class DiskBasedCache implements Cache {
     /**
      * Initializes the DiskBasedCache by scanning for all files currently in the
      * specified root directory. Creates the root directory if necessary.
+     * 扫描指定根目录下的所有文件以初始化DiskBasedCache
      */
     @Override
     public synchronized void initialize() {
@@ -343,7 +348,7 @@ public class DiskBasedCache implements Cache {
      * Handles holding onto the cache headers for an entry.
      */
     // Visible for testing.
-    static class CacheHeader {
+    static class CacheHeader {//缓存头部
         /** The size of the data identified by this CacheHeader. (This is not
          * serialized to disk. */
         public long size;

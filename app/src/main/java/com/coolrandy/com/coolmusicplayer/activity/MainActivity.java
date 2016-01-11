@@ -1,4 +1,4 @@
-package com.coolrandy.com.coolmusicplayer;
+package com.coolrandy.com.coolmusicplayer.activity;
 
 import android.os.Bundle;
 import android.os.Message;
@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.StringRequest;
+import com.coolrandy.com.coolmusicplayer.R;
 import com.coolrandy.com.coolmusicplayer.model.AlbumTrack;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
