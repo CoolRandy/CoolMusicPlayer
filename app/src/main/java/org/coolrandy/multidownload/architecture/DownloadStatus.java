@@ -36,6 +36,14 @@ public class DownloadStatus {
     //callback
     private CallBack callBack;
 
+    public CallBack getCallBack() {
+        return callBack;
+    }
+
+    public void setCallBack(CallBack callBack) {
+        this.callBack = callBack;
+    }
+
     public boolean isAcceptRanges() {
         return acceptRanges;
     }
