@@ -115,6 +115,7 @@ public class UploadToServer extends Activity{
 
                 //open url connection
                 connection = (HttpURLConnection)url.openConnection();
+                //设置post请求必须设置以下两行
                 connection.setDoInput(true);
                 connection.setDoOutput(true);
                 connection.setUseCaches(false);
@@ -125,24 +126,28 @@ public class UploadToServer extends Activity{
                 connection.setRequestProperty("uploaded_file", fileName);
 
                 dos = new DataOutputStream(connection.getOutputStream());
+                //将参数头数据写入到输出流中
                 dos.writeBytes(twoHyphens + boundary + lineEnd);
                 dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\"" + fileName + "\"" + lineEnd);
+                //TODO 正常设置参数头参数后，需要添加两个换行之后才是具体内容，这里分析可能是由于最后的参数设置最后包含了一个换行，所以这里只写了一个换行
                 dos.writeBytes(lineEnd);
                 //创建一个最大尺寸的buffer
                 bytesAvailable = fin.available();
                 bufferSize = Math.min(bytesAvailable, maxBufferSize);
                 buffers = new byte[bufferSize];
 
-                //读取文件，然后写入
-                bytesRead = fin.read(buffers, 0, bufferSize);
+                //读取数据文件，然后写入到输出流
+                bytesRead = fin.read(buffers, 0, bufferSize);//每次从输入流读取buffersize大小的数据
                 while (bytesRead > 0){
-                    dos.write(buffers, 0, bufferSize);
+                    dos.write(buffers, 0, bufferSize);//将每次读取的buffersize大小的数据写到输出流中
+                    //然后重新获取输入流可获取的数据大小，并设置buffersize值，然后继续从输入流中读取数据，循环判断，直到数据读取完毕
                     bytesAvailable = fin.available();
                     bufferSize = Math.min(bytesAvailable, maxBufferSize);
                     bytesRead = fin.read(buffers, 0, bufferSize);
                 }
-
+                //最后添加换行
                 dos.writeBytes(lineEnd);
+                //定义最后数据分割线  --boundary--   换行
                 dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
                 //获取server响应
