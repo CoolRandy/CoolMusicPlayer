@@ -82,7 +82,11 @@ public class DownloadManager implements Downloader.OnDownloaderDestoryedListener
      */
     public void download(DownloadRequest request, String tag, CallBack callBack){
 
+        String key = createKey(tag);
+        if(check(key)){
+            //map中不存在，为新的请求
 
+        }
     }
 
 
@@ -123,7 +127,7 @@ public class DownloadManager implements Downloader.OnDownloaderDestoryedListener
     }
 
     @Override
-    public void onDestoryed(String key, Downloader downloader) {
+    public void onDestroyed(String key, Downloader downloader) {
 
         if(mDownloadMap.containsKey(key)){
             mDownloadMap.remove(key);

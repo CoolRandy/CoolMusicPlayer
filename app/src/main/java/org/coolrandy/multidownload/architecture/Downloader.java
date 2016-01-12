@@ -7,7 +7,7 @@ public interface Downloader {
 
     public interface OnDownloaderDestoryedListener{
 
-        void onDestoryed(String key, Downloader downloader);
+        void onDestroyed(String key, Downloader downloader);
     }
 
     boolean isRunning();
