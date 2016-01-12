@@ -103,7 +103,6 @@ public class UploadToServer extends Activity{
                             +uploadFilePath + "" + uploadFileName);
                 }
             });
-
             return 0;
 
         }else {
