@@ -28,6 +28,8 @@ public interface CallBack {
      */
     void onProgress(long finished, long total, int progress);
 
+    void onCompleted();
+
     void onDownloadPaused();
 
     void onDownloadCanceled();

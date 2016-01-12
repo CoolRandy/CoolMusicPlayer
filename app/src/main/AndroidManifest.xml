@@ -25,6 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.MainActivity"/>
+        <activity android:name=".upload.UploadToServer"/>
     </application>
 
 </manifest>

@@ -13,10 +13,10 @@ public interface DownloadTask extends Runnable {
 
         void onDownloadConnecting();
         void OnDownloadFinished();
-        void OnDownlaodPaused();
-        void OnDownlaodCanceled();
+        void OnDownloadPaused();
+        void OnDownloadCanceled();
         void OnDownloadProgress(long finished, long length);
-        void OnDownlaodFailed(DownloadException de);
+        void OnDownloadFailed(DownloadException de);
     }
 
     void cancel();

@@ -4,6 +4,7 @@ import org.coolrandy.multidownload.DownloadException;
 
 /**
  * Created by admin on 2016/1/11.
+ * 连接任务接口
  */
 public interface ConnectTask extends Runnable {
 
