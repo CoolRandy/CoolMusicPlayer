@@ -5,7 +5,7 @@ package org.coolrandy.multidownload.architecture;
  */
 public interface Downloader {
 
-    public interface OnDownloaderDestoryedListener{
+    public interface OnDownloaderDestroyedListener{
 
         void onDestroyed(String key, Downloader downloader);
     }

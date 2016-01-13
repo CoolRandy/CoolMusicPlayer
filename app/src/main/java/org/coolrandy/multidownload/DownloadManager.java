@@ -9,9 +9,11 @@ import android.util.Log;
 
 import com.android.volley.toolbox.DownloadRequest;
 
+import org.coolrandy.multidownload.architecture.DownloadResponse;
 import org.coolrandy.multidownload.architecture.DownloadStatus;
 import org.coolrandy.multidownload.architecture.DownloadStatusDelivery;
 import org.coolrandy.multidownload.architecture.Downloader;
+import org.coolrandy.multidownload.core.DownloadResponseImpl;
 import org.coolrandy.multidownload.core.DownloadStatusDeliveryImpl;
 
 import java.util.HashMap;
@@ -24,7 +26,7 @@ import java.util.concurrent.Executors;
  * 下载管理器
  * 主要用于对下载状态的管理，如暂停，取消  对下载线程数的管理
  */
-public class DownloadManager implements Downloader.OnDownloaderDestoryedListener{
+public class DownloadManager implements Downloader.OnDownloaderDestroyedListener{
 
     private static final String TAG = DownloadManager.class.getSimpleName();
 
@@ -85,6 +87,7 @@ public class DownloadManager implements Downloader.OnDownloaderDestoryedListener
         String key = createKey(tag);
         if(check(key)){
             //map中不存在，为新的请求
+            DownloadResponse response = new DownloadResponseImpl(mDelivery, callBack);
 
         }
     }

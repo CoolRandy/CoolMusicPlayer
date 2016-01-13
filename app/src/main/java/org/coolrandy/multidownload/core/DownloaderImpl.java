@@ -1,11 +1,17 @@
 package org.coolrandy.multidownload.core;
 
+import org.coolrandy.multidownload.DownloadConfig;
 import org.coolrandy.multidownload.DownloadException;
+import org.coolrandy.multidownload.DownloadInfo;
+import org.coolrandy.multidownload.DownloadRequest;
 import org.coolrandy.multidownload.architecture.ConnectTask;
 import org.coolrandy.multidownload.architecture.DownloadResponse;
 import org.coolrandy.multidownload.architecture.DownloadStatus;
 import org.coolrandy.multidownload.architecture.DownloadTask;
 import org.coolrandy.multidownload.architecture.Downloader;
+
+import java.util.List;
+import java.util.concurrent.Executor;
 
 /**
  * Created by admin on 2016/1/12.
@@ -17,6 +23,29 @@ public class DownloaderImpl implements Downloader, ConnectTask.OnConnectListener
     private int mStatus;
     //响应
     private DownloadResponse response;
+    //请求
+    private DownloadRequest request;
+    //并发执行
+    private Executor executor;
+    //数据库管理实例
+
+    //tag
+    private String tag;
+    //下载配置
+    private DownloadConfig config;
+
+    private OnDownloaderDestroyedListener destoryedListener;
+
+    //连接任务
+    private ConnectTask connectTask;
+
+    //设置获取下载信息
+    private DownloadInfo downloadInfo;
+
+    //存放downloaderTask的列表
+    private List<DownloadTask> downloadTasks;
+
+
 
     //正在运行:网络正在连接、已经连接、开始下载，下载进度
     @Override
