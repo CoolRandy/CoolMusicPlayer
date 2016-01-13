@@ -7,16 +7,17 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.android.volley.toolbox.DownloadRequest;
-
 import org.coolrandy.multidownload.architecture.DownloadResponse;
-import org.coolrandy.multidownload.architecture.DownloadStatus;
 import org.coolrandy.multidownload.architecture.DownloadStatusDelivery;
 import org.coolrandy.multidownload.architecture.Downloader;
 import org.coolrandy.multidownload.core.DownloadResponseImpl;
 import org.coolrandy.multidownload.core.DownloadStatusDeliveryImpl;
+import org.coolrandy.multidownload.core.DownloaderImpl;
+import org.coolrandy.multidownload.db.DatabaseManager;
+import org.coolrandy.multidownload.db.ThreadInfo;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -35,6 +36,9 @@ public class DownloadManager implements Downloader.OnDownloaderDestroyedListener
     //并发服务
     private ExecutorService mExecutorService;
     private DownloadStatusDelivery mDelivery;
+
+    //线程管理数据库
+    private DatabaseManager databaseManager;
 
     //单例
     private static DownloadManager sDownloadManager;
@@ -69,7 +73,8 @@ public class DownloadManager implements Downloader.OnDownloaderDestroyedListener
         }
 
         mConfig = config;
-        sDownloadManager = DownloadManager.getInstance();
+//      sDownloadManager = DownloadManager.getInstance();
+        databaseManager = DatabaseManager.getInstance(context);
         mExecutorService = Executors.newFixedThreadPool(mConfig.getMaxThreadNum());
         mDelivery = new DownloadStatusDeliveryImpl(new Handler(Looper.getMainLooper()));
     }
@@ -77,10 +82,10 @@ public class DownloadManager implements Downloader.OnDownloaderDestroyedListener
     //添加以下功能：下载，取消（全部），暂停（全部）
 
     /**
-     * 下载
+     * 下载  获取到请求request实例之后就可以执行下载
      * @param request 下载的请求
      * @param tag     url
-     * @param callBack  回调
+     * @param callBack  回调：可以new一个回调实例，重写相应的方法
      */
     public void download(DownloadRequest request, String tag, CallBack callBack){
 
@@ -88,8 +93,105 @@ public class DownloadManager implements Downloader.OnDownloaderDestroyedListener
         if(check(key)){
             //map中不存在，为新的请求
             DownloadResponse response = new DownloadResponseImpl(mDelivery, callBack);
-
+            Downloader downloader = new DownloaderImpl(response, request, tag, databaseManager, mExecutorService,
+                    mConfig, this);
+            mDownloadMap.put(key, downloader);
+            downloader.start();
         }
+    }
+
+    /**
+     * 根据tag暂停下载线程
+     * @param tag
+     */
+    public void pause(String tag){
+
+        String key = createKey(tag);
+        if(mDownloadMap.containsKey(key)){
+            Downloader downloader = mDownloadMap.get(key);
+            if(downloader != null){
+                if(downloader.isRunning()) {
+                    downloader.pause();
+                }
+            }
+            mDownloadMap.remove(key);
+        }
+
+    }
+
+    /**
+     * 根据tag取消下载线程
+     * @param tag
+     */
+    public void cancel(String tag){
+
+        String key = createKey(tag);
+        if(mDownloadMap.containsKey(key)){
+            Downloader downloader = mDownloadMap.get(key);
+            if(downloader != null){
+
+                downloader.cancel();
+            }
+            mDownloadMap.remove(key);
+        }
+    }
+
+    /**
+     * 暂停所有的下载
+     */
+    public void pauseAll(){
+
+        if(!mDownloadMap.isEmpty()){
+            for (Downloader downloader: mDownloadMap.values()){
+
+                if(downloader != null){
+                    if(downloader.isRunning()) {
+                        downloader.pause();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 取消所有的下载
+     */
+    public void cancelAll(){
+
+        if(!mDownloadMap.isEmpty()){
+            for (Downloader downloader: mDownloadMap.values()){
+
+                if(downloader != null){
+                    downloader.cancel();
+                }
+            }
+        }
+    }
+
+    /**
+     * 获取下载的进度
+     * @param tag
+     * @return
+     */
+    public DownloadInfo getDownloadProgress(String tag) {
+        String key = createKey(tag);
+        List<ThreadInfo> threadInfos = databaseManager.getThreadInfos(key);
+        DownloadInfo downloadInfo = null;
+        if (!threadInfos.isEmpty()) {
+            int finished = 0;
+            int progress = 0;
+            int total = 0;
+            for (ThreadInfo info : threadInfos) {
+                finished += info.getFinished();
+                total += (info.getEnd() - info.getStart());
+            }
+            progress = (int) ((long) finished * 100 / total);
+            downloadInfo = new DownloadInfo();
+            downloadInfo.setFinished(finished);
+            downloadInfo.setLength(total);
+            downloadInfo.setProgress(progress);
+        }
+        return downloadInfo;
     }
 
 

@@ -50,7 +50,7 @@ public class DownloadFileFromUrl extends AsyncTask<String, String, String> {
             URLConnection conection = url.openConnection();
             conection.connect();
             // getting file length
-            int lenghtOfFile = conection.getContentLength();
+            int lengthOfFile = conection.getContentLength();
 
             // input stream to read file - with 8k buffer
             InputStream input = new BufferedInputStream(url.openStream(), 8192);
@@ -70,7 +70,7 @@ public class DownloadFileFromUrl extends AsyncTask<String, String, String> {
                 total += count;
                 // publishing the progress....
                 // After this onProgressUpdate will be called
-                publishProgress(""+(int)((total*100)/lenghtOfFile));
+                publishProgress(""+(int)((total*100)/lengthOfFile));
 
                 // writing data to file
                 output.write(data, 0, count);

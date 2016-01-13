@@ -19,6 +19,7 @@ public interface DownloadTask extends Runnable {
         void OnDownloadFailed(DownloadException de);
     }
 
+    //执行取消、暂停操作  y用于外部调用（比如绑定到某个按钮）
     void cancel();
     void pause();
 

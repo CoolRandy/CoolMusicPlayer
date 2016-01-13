@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * Created by admin on 2016/1/13.
  * 下载请求
- *
+ * 在application中进行一些配置之后，就可以发起请求
  */
 public class DownloadRequest {
 
