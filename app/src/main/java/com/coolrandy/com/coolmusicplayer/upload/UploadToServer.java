@@ -26,6 +26,7 @@ import java.net.URL;
  * http://programmerguru.com/android-tutorial/how-to-upload-image-to-php-server/
  * http://www.codepuppet.com/2013/03/26/android-uploading-a-file-to-a-php-server/
  * http://stackoverflow.com/questions/23921356/android-upload-image-to-php-server
+ * 采用MultipartEntity上传  http://blog.csdn.net/bboyfeiyu/article/details/42266869
  * 上传文件到服务器 这里上传一张图片
  * 上传文件实质就是采用post的方式请求server
  */
