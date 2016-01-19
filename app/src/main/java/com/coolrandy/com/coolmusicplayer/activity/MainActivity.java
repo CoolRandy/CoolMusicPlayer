@@ -5,6 +5,9 @@ import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -12,7 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.StringRequest;
+import com.coolrandy.com.coolmusicplayer.AlbumAdapter;
 import com.coolrandy.com.coolmusicplayer.R;
 import com.coolrandy.com.coolmusicplayer.model.AlbumTrack;
 import com.google.gson.Gson;
@@ -24,20 +27,28 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+/**
+ * https://github.com/telecapoland/jamendo-android
+ */
 public class MainActivity extends AppCompatActivity {
 
     public static final String url = "http://api.jamendo.com/get2/id+name+url+image+rating+artist_name/album/json/?n=20&order=ratingweek_desc";
     private static final int REFRESHDATA = 10;
-    private List<AlbumTrack> albumTracks;
-
-    private TextView textView;
+    private List<AlbumTrack> albumTracks = new ArrayList<>();
+//    @InjectView(R.id.text)
 
     private OkHttpClient okHttpClient;
     private Request request;
+    @InjectView(R.id.recycler_view)
+    public RecyclerView recyclerView;
+    private AlbumAdapter albumAdapter;
+
     private android.os.Handler mHandler = new android.os.Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -49,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                     textView.setText(track.toString());
                     textView.setText("\n");
                 }*/
-                textView.setText(albumTracks.toString());
+//                textView.setText(albumTracks.toString());
             }
         }
     };
@@ -58,10 +69,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.inject(this);
+//        recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        textView = (TextView)findViewById(R.id.text);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +82,19 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        //创建默认的线性LayoutManager  通过布局管理器LayoutManager控制显示方式
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //确定每个item的高度是固定的，以提升性能
+        recyclerView.setHasFixedSize(true);
+        //设置Item增加、移除动画
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        //添加分割线
+//        recyclerView.addItemDecoration(new DividerItemDecoration(
+//                getActivity(), DividerItemDecoration.HORIZONTAL_LIST));
+        //设置adapter
+        albumAdapter = new AlbumAdapter(this, albumTracks);
+        recyclerView.setAdapter(albumAdapter);
 
         okHttpClient = new OkHttpClient();
 
@@ -98,10 +122,17 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("TAG", "res--->" + res);
                 albumTracks = new Gson().fromJson(res, new TypeToken<List<AlbumTrack>>(){}.getType());
                 Log.e("TAG", "albumTracks--->" + albumTracks.toString());
-                Message msg = new Message();
-                msg.what = REFRESHDATA;
-                msg.obj = albumTracks;
-                mHandler.sendMessage(msg);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        albumAdapter.setAlbumList(albumTracks);
+                    }
+                });
+
+//                Message msg = new Message();
+//                msg.what = REFRESHDATA;
+//                msg.obj = albumTracks;
+//                mHandler.sendMessage(msg);
             }
 
             @Override
