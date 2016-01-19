@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.coolrandy.com.coolmusicplayer.AlbumAdapter;
 import com.coolrandy.com.coolmusicplayer.R;
 import com.coolrandy.com.coolmusicplayer.model.AlbumTrack;
+import com.coolrandy.com.coolmusicplayer.widget.DividerItemDecoration;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
@@ -84,17 +86,38 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //创建默认的线性LayoutManager  通过布局管理器LayoutManager控制显示方式
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //可以通过线性布局管理器查找第一个可见的item或最后可见的item
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+
+        recyclerView.setLayoutManager(linearLayoutManager);
         //确定每个item的高度是固定的，以提升性能
         recyclerView.setHasFixedSize(true);
         //设置Item增加、移除动画
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         //添加分割线
-//        recyclerView.addItemDecoration(new DividerItemDecoration(
-//                getActivity(), DividerItemDecoration.HORIZONTAL_LIST));
+        recyclerView.addItemDecoration(new DividerItemDecoration(
+                this, DividerItemDecoration.VERTICAL_LIST));
         //设置adapter
         albumAdapter = new AlbumAdapter(this, albumTracks);
         recyclerView.setAdapter(albumAdapter);
+
+        //设置触摸监听
+        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
 
         okHttpClient = new OkHttpClient();
 

@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.coolrandy.com.coolmusicplayer.model.AlbumTrack;
+import com.coolrandy.com.coolmusicplayer.view.ImageRoundView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -35,6 +36,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
 
     public void setAlbumList(List<AlbumTrack> albumList){
         albumTracks = albumList;
+        //可以采用一些新的数据更新的方法，会有一些动画
         notifyDataSetChanged();
     }
 
@@ -44,6 +46,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
         holder.albumName.setText(albumTracks.get(position).getName());
         holder.artistName.setText(albumTracks.get(position).getArtist_name());
         Picasso.with(context).load(albumTracks.get(position).getImage()).into(holder.pageImage);
+
     }
 
     @Override
@@ -63,11 +66,12 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
         @InjectView(R.id.artist_name)
         public TextView artistName;
         @InjectView(R.id.album_page)
-        public ImageView pageImage;
+        public ImageRoundView pageImage;
 
         public ViewHolder(View view){
             super(view);
             ButterKnife.inject(this, view);
+            //此处类似于ListView中的item点击事件
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

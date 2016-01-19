@@ -1,20 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/light_toolbar">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:orientation="horizontal"
         android:gravity="center_vertical">
-        <ImageView
+        <!--<ImageView
             android:id="@+id/album_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@mipmap/ic_launcher"
-            android:layout_marginLeft="10dp"/>
+            android:layout_marginLeft="10dp"/>-->
+        <com.coolrandy.com.coolmusicplayer.view.ImageRoundView
+            android:id="@+id/album_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_launcher"
+            app:borderRadius="10dp"
+            app:type="round"/>
         <RelativeLayout
             android:id="@+id/content_layout"
             android:layout_width="wrap_content"
