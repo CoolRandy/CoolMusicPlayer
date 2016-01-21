@@ -5,4 +5,10 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="light_toolbar">@android:color/holo_blue_dark</color>
+
+    <color name="white">#EBEBEB</color>
+
+    <color name="material_blue_500">#009688</color>
+    <color name="material_blue_700">#00796B</color>
+    <color name="material_green_A200">#FD87A9</color>
 </resources>

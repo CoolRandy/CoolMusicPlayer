@@ -5,4 +5,10 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+
+    <style name="AppTheme" parent="AppBaseTheme">
+        <item name="android:statusBarColor">@color/material_blue_700</item>
+    </style>
+
+
 </resources>

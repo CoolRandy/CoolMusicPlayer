@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,8 +16,6 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-
 import com.coolrandy.com.coolmusicplayer.AlbumAdapter;
 import com.coolrandy.com.coolmusicplayer.R;
 import com.coolrandy.com.coolmusicplayer.model.AlbumTrack;
@@ -45,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String url = "http://api.jamendo.com/get2/id+name+url+image+rating+artist_name/album/json/?n=20&order=ratingweek_desc";
     private static final int REFRESHDATA = 10;
     private List<AlbumTrack> albumTracks = new ArrayList<>();
-//    @InjectView(R.id.text)
 
     private OkHttpClient okHttpClient;
     private Request request;
@@ -78,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
-//        recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -101,14 +99,15 @@ public class MainActivity extends AppCompatActivity {
         //设置Item增加、移除动画
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         //添加分割线
-        recyclerView.addItemDecoration(new DividerItemDecoration(
-                this, DividerItemDecoration.VERTICAL_LIST));
+//        recyclerView.addItemDecoration(new DividerItemDecoration(
+//                this, DividerItemDecoration.VERTICAL_LIST));
         //设置adapter
         albumAdapter = new AlbumAdapter(this, albumTracks);
         recyclerView.setAdapter(albumAdapter);
 
         //设置触摸监听
         recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+
             @Override
             public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
                 return false;

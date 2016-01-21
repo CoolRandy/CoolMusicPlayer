@@ -1,23 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <!--<LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center">
-        <com.coolrandy.com.coolmusicplayer.view.AVLoadingIndicatorView
-            android:id="@+id/avloadingIndicatorView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="visible"
-            app:indicator="BallPulse"
-            app:indicator_color="@color/light_toolbar"/>
-
-    </LinearLayout>
-    -->
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
     <!--RecyclerView没有listSelector和divider的属性，这里设置无效-->
     <android.support.v7.widget.RecyclerView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -29,4 +16,21 @@
         android:divider="#ffff0000"
         android:dividerHeight="10dp"/>
 
-</RelativeLayout>
+    <!--加载视图-->
+    <LinearLayout
+        android:id="@+id/load_layout"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <com.coolrandy.com.coolmusicplayer.view.AVLoadingIndicatorView
+            android:id="@+id/avloadingIndicatorView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:indicator="BallPulse"
+            app:indicator_color="@color/light_toolbar"/>
+
+    </LinearLayout>
+</FrameLayout>
