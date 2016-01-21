@@ -16,6 +16,23 @@
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_main" />
+    <!--加载视图-->
+    <LinearLayout
+        android:id="@+id/load_layout"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <com.coolrandy.com.coolmusicplayer.view.AVLoadingIndicatorView
+            android:id="@+id/avloadingIndicatorView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:indicator="BallPulse"
+            app:indicator_color="@color/light_toolbar"/>
+
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
         android:layout_width="wrap_content" android:layout_height="wrap_content"

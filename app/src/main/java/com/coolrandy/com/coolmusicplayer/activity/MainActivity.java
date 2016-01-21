@@ -14,11 +14,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.coolrandy.com.coolmusicplayer.AlbumAdapter;
 import com.coolrandy.com.coolmusicplayer.R;
 import com.coolrandy.com.coolmusicplayer.model.AlbumTrack;
+import com.coolrandy.com.coolmusicplayer.view.AVLoadingIndicatorView;
 import com.coolrandy.com.coolmusicplayer.widget.DividerItemDecoration;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -50,6 +52,10 @@ public class MainActivity extends AppCompatActivity {
     @InjectView(R.id.recycler_view)
     public RecyclerView recyclerView;
     private AlbumAdapter albumAdapter;
+    @InjectView(R.id.avloadingIndicatorView)
+    public AVLoadingIndicatorView indicatorView;
+    @InjectView(R.id.load_layout)
+    public LinearLayout linearLayout;
 
     private android.os.Handler mHandler = new android.os.Handler(){
         @Override
@@ -120,9 +126,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         okHttpClient = new OkHttpClient();
-
+        startAnim();
         requestGetData(url);
 
+    }
+
+    public void startAnim(){
+        linearLayout.setVisibility(View.VISIBLE);
+        indicatorView.setVisibility(View.VISIBLE);
+    }
+
+    public void stopAnim(){
+        linearLayout.setVisibility(View.GONE);
+        indicatorView.setVisibility(View.GONE);
     }
 
     /**
@@ -141,8 +157,18 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Response response) throws IOException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        stopAnim();
+                    }
+                });
                 String res = response.body().string();
                 Log.e("TAG", "res--->" + res);
+                if(null == res){
+                    stopAnim();
+                    return;
+                }
                 albumTracks = new Gson().fromJson(res, new TypeToken<List<AlbumTrack>>(){}.getType());
                 Log.e("TAG", "albumTracks--->" + albumTracks.toString());
                 runOnUiThread(new Runnable() {
@@ -160,7 +186,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Request arg0, IOException arg1) {
-
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        stopAnim();
+                    }
+                });
             }
         });
     }
