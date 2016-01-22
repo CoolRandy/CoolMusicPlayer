@@ -4,8 +4,14 @@ import java.io.Serializable;
 
 /**
  * Created by admin on 2016/1/7.
+ * 专辑： 包括专辑id、专辑名称、专辑封面、专辑的评价（等级）、艺术家的名字、专辑页url
  */
-public class AlbumTrack implements Serializable {
+public class AlbumBean implements Serializable {
+
+    /**
+     *  一般要手动添加一个序列化id，这样可保证序列化和解序列化的过程不会出现紊乱
+     */
+    private static final long serialVersionUID = 8517633545835124349L;
 
     private long id;
     private String name;

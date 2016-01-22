@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
-    <!--RecyclerView没有listSelector和divider的属性，这里设置无效-->
-    <android.support.v7.widget.RecyclerView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/test"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/recycler_view"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:divider="#ffff0000"
-        android:dividerHeight="10dp"/>
+        />
 
-    <!--加载视图  回头把这块单独抽取出来-->
+    <!--加载视图-->
     <LinearLayout
         android:id="@+id/load_layout"
         android:layout_width="match_parent"
@@ -33,4 +28,5 @@
             app:indicator_color="@color/light_toolbar"/>
 
     </LinearLayout>
-</FrameLayout>
+
+</LinearLayout>

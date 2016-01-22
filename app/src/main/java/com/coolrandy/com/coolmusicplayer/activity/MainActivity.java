@@ -1,10 +1,10 @@
 package com.coolrandy.com.coolmusicplayer.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,11 +16,12 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
 import com.coolrandy.com.coolmusicplayer.AlbumAdapter;
 import com.coolrandy.com.coolmusicplayer.R;
-import com.coolrandy.com.coolmusicplayer.model.AlbumTrack;
+import com.coolrandy.com.coolmusicplayer.model.AlbumBean;
 import com.coolrandy.com.coolmusicplayer.view.AVLoadingIndicatorView;
-import com.coolrandy.com.coolmusicplayer.widget.DividerItemDecoration;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
@@ -43,7 +44,9 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String url = "http://api.jamendo.com/get2/id+name+url+image+rating+artist_name/album/json/?n=20&order=ratingweek_desc";
     private static final int REFRESHDATA = 10;
-    private List<AlbumTrack> albumTracks = new ArrayList<>();
+    private static final String ALBUM_ID = "album_id";
+    private List<AlbumBean> albumBeans = new ArrayList<>();
+
 
     private OkHttpClient okHttpClient;
     private Request request;
@@ -61,12 +64,12 @@ public class MainActivity extends AppCompatActivity {
             super.handleMessage(msg);
 
             if(msg.what == 10){
-                /*List<AlbumTrack> albumTrackList = (List <AlbumTrack>)msg.obj;
-                for(AlbumTrack track: albumTrackList){
+                /*List<AlbumBean> albumTrackList = (List <AlbumBean>)msg.obj;
+                for(AlbumBean track: albumTrackList){
                     textView.setText(track.toString());
                     textView.setText("\n");
                 }*/
-//                textView.setText(albumTracks.toString());
+//                textView.setText(albumBeans.toString());
             }
         }
     };
@@ -102,7 +105,19 @@ public class MainActivity extends AppCompatActivity {
 //        recyclerView.addItemDecoration(new DividerItemDecoration(
 //                this, DividerItemDecoration.VERTICAL_LIST));
         //设置adapter
-        albumAdapter = new AlbumAdapter(this, albumTracks);
+        albumAdapter = new AlbumAdapter(this, albumBeans);
+        albumAdapter.setOnItemClickListener(new AlbumAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+                Toast.makeText(MainActivity.this, "点击专辑item", Toast.LENGTH_SHORT).show();
+                Log.e("TAG", "album id-->" + albumBeans.get(position).getId());
+//                startAnim();
+                Intent intent = new Intent(MainActivity.this, AlbumInfoActivity.class);
+                intent.putExtra(ALBUM_ID, albumBeans.get(position).getId());
+                startActivity(intent);
+            }
+        });
         recyclerView.setAdapter(albumAdapter);
 
         //设置触摸监听
@@ -140,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
         indicatorView.setVisibility(View.GONE);
     }
 
+
     /**
      * 发送Get请求
      * callback有两种回调方式，一种是call.execute,该方式不会开启新的线程，需手动开启，然后再线程中调用该方式
@@ -168,18 +184,18 @@ public class MainActivity extends AppCompatActivity {
                     stopAnim();
                     return;
                 }
-                albumTracks = new Gson().fromJson(res, new TypeToken<List<AlbumTrack>>(){}.getType());
-                Log.e("TAG", "albumTracks--->" + albumTracks.toString());
+                albumBeans = new Gson().fromJson(res, new TypeToken<List<AlbumBean>>(){}.getType());
+                Log.e("TAG", "albumBeans--->" + albumBeans.toString());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        albumAdapter.setAlbumList(albumTracks);
+                        albumAdapter.setAlbumList(albumBeans);
                     }
                 });
 
 //                Message msg = new Message();
 //                msg.what = REFRESHDATA;
-//                msg.obj = albumTracks;
+//                msg.obj = albumBeans;
 //                mHandler.sendMessage(msg);
             }
 
