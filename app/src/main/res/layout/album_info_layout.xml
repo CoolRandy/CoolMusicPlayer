@@ -3,14 +3,42 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#3b558b2f">
 
-    <TextView
-        android:id="@+id/test"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+        <android.support.design.widget.AppBarLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                app:title="炫酷音乐"
+                app:subtitle="享受属于你的时光"/>
+
+        </android.support.design.widget.AppBarLayout>
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
-
+        android:gravity="center">
+        <com.coolrandy.com.coolmusicplayer.view.CircleImageView
+            android:id="@+id/page_imageview"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:src="@mipmap/ic_launcher"
+            app:civ_border_width="4dp"
+            app:civ_border_color="#7E9E9E9E"/>
+    </LinearLayout>
     <!--加载视图-->
     <LinearLayout
         android:id="@+id/load_layout"

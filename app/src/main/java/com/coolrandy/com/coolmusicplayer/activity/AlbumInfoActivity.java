@@ -11,6 +11,7 @@ import com.coolrandy.com.coolmusicplayer.R;
 import com.coolrandy.com.coolmusicplayer.model.AlbumBean;
 import com.coolrandy.com.coolmusicplayer.utils.TrackApi;
 import com.coolrandy.com.coolmusicplayer.view.AVLoadingIndicatorView;
+import com.coolrandy.com.coolmusicplayer.view.CircleImageView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
@@ -18,6 +19,7 @@ import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
@@ -31,6 +33,7 @@ import butterknife.InjectView;
 public class AlbumInfoActivity extends AppCompatActivity {
 
     private static final String ALBUM_ID = "album_id";
+    private static final String ALBUM_PAGE = "album_page";
     //这里依然采用OkHttp来请求数据
     private OkHttpClient okHttpClient;
     private Request request;
@@ -39,19 +42,32 @@ public class AlbumInfoActivity extends AppCompatActivity {
     public LinearLayout loadLayout;
     @InjectView(R.id.avloadingIndicatorView)
     public AVLoadingIndicatorView indicatorView;
-    @InjectView(R.id.test)
-    public TextView textView;
+//    @InjectView(R.id.test)
+//    public TextView textView;
+    @InjectView(R.id.page_imageview)
+    public CircleImageView circleImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.album_info_layout);
         ButterKnife.inject(this);
-        long albunId = getIntent().getLongExtra(ALBUM_ID, 0);
-        url = TrackApi.ALBUM_INFO_URL + albunId;
+//        initView();
+        initData();
         okHttpClient = new OkHttpClient();
-//        startAnim();
         requestGetData(url);
+    }
+
+    private void initData(){
+        long albumId = getIntent().getLongExtra(ALBUM_ID, 0);
+        String albumPage = getIntent().getStringExtra(ALBUM_PAGE);
+        url = TrackApi.ALBUM_INFO_URL + albumId;
+        Picasso.with(this).load(albumPage).into(circleImageView);
+    }
+
+    private void initView(){
+
+
     }
 
     public void startAnim(){
@@ -88,6 +104,8 @@ public class AlbumInfoActivity extends AppCompatActivity {
                 });
                 final String res = response.body().string();
                 Log.e("TAG", "res--->" + res);
+
+
                 if (null == res) {
                     stopAnim();
                     return;
@@ -95,7 +113,7 @@ public class AlbumInfoActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        textView.setText(res);
+//                        textView.setText(res);
                     }
                 });
             }

@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String url = "http://api.jamendo.com/get2/id+name+url+image+rating+artist_name/album/json/?n=20&order=ratingweek_desc";
     private static final int REFRESHDATA = 10;
     private static final String ALBUM_ID = "album_id";
+    private static final String ALBUM_PAGE = "album_page";
     private List<AlbumBean> albumBeans = new ArrayList<>();
 
 
@@ -112,9 +113,9 @@ public class MainActivity extends AppCompatActivity {
 
                 Toast.makeText(MainActivity.this, "点击专辑item", Toast.LENGTH_SHORT).show();
                 Log.e("TAG", "album id-->" + albumBeans.get(position).getId());
-//                startAnim();
                 Intent intent = new Intent(MainActivity.this, AlbumInfoActivity.class);
                 intent.putExtra(ALBUM_ID, albumBeans.get(position).getId());
+                intent.putExtra(ALBUM_PAGE, albumBeans.get(position).getImage());
                 startActivity(intent);
             }
         });

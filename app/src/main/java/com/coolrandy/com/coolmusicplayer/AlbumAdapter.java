@@ -63,7 +63,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
         holder.albumName.setText(albumBeans.get(position).getName());
         holder.artistName.setText(albumBeans.get(position).getArtist_name());
         Picasso.with(context).load(albumBeans.get(position).getImage()).into(holder.pageImage);
-
+//        Log.e("TAG", "albumLayout--->" + holder.albumLayout);
         //如果设置了回调，则设置点击事件
         if(onItemClickListener != null){
             holder.albumLayout.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +105,8 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Log.d("ViewHolder", "onClick--> position = " + getPosition());
+//                    Log.e("ViewHolder", "onClick--> position = " + getPosition());
+//                    Log.e("TAG", "albumLayout--->" + albumLayout);
                 }
             });
         }

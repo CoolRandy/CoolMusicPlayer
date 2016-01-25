@@ -26,7 +26,8 @@
         </activity>
         <activity android:name=".activity.DownloadActivity"/>
         <activity android:name=".upload.UploadToServer"/>
-        <activity android:name=".activity.AlbumInfoActivity"/>
+        <activity android:name=".activity.AlbumInfoActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

@@ -13,7 +13,11 @@ public class TrackApi {
     public static final int TRACK_PER_PAGE = 10;
 
     /**
-     * 专辑详情api  track
+     * 专辑详情api  track  对于每个track本身并没有提供封面图，只有所在专辑的封面图
      */
-    public static String ALBUM_INFO_URL = "http://api.jamendo.com/get2/id+name+duration+url+stream/track/jsonpretty/?album_id=";
+    public static String ALBUM_INFO_URL = BASE_API + "id+name+duration+url+stream/track/jsonpretty/?album_id=";
+
+
+
+
 }
