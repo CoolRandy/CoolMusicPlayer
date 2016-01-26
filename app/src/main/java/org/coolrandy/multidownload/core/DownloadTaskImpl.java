@@ -204,7 +204,7 @@ public abstract class DownloadTaskImpl implements DownloadTask {
             // cancel
             throw new DownloadException("Download canceled!", DownloadStatus.STATUS_CANCELED);
         } else if (mCommend == DownloadStatus.STATUS_PAUSED) {
-            // pause
+            // play
             updateDB(threadInfo);
             throw new DownloadException("Download paused!", DownloadStatus.STATUS_PAUSED);
         }

@@ -4,9 +4,13 @@
     <!-- Base application theme. -->
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
+        <!--toolbar的颜色-->
         <item name="colorPrimary">@color/material_blue_500</item>
+        <!--状态栏的颜色-->
         <item name="colorPrimaryDark">@color/material_blue_700</item>
         <item name="colorAccent">@color/material_green_A200</item>
+        <!--窗口的背景颜色-->
+        <item name="android:windowBackground">@color/grey</item>
         <!--自定义的分割线-->
         <item name="android:listDivider">@drawable/selector_rect_item</item>
     </style>

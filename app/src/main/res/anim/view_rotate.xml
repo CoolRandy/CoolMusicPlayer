@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--设置转动角度从0到360度  转动时间500ms  具体左顶点、上边缘为50%的距离  repeatCount="-1"表示循环旋转-->
+    <rotate android:fromDegrees="0"
+        android:toDegrees="359"
+        android:duration="5000"
+        android:repeatCount="-1"
+        android:pivotX="50%"
+        android:pivotY="50%"/>
+</set>

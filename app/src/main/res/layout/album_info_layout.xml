@@ -27,17 +27,75 @@
         </android.support.design.widget.AppBarLayout>
     </LinearLayout>
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         android:gravity="center">
-        <com.coolrandy.com.coolmusicplayer.view.CircleImageView
-            android:id="@+id/page_imageview"
-            android:layout_width="160dp"
-            android:layout_height="160dp"
-            android:src="@mipmap/ic_launcher"
-            app:civ_border_width="4dp"
-            app:civ_border_color="#7E9E9E9E"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp">
+            <com.coolrandy.com.coolmusicplayer.view.WaterLampText
+                android:id="@+id/play_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="最亮的那颗星"
+                android:textColor="#ffffff"
+                android:textSize="30sp"
+                android:ellipsize="marquee"
+                android:singleLine="true"
+                android:marqueeRepeatLimit="marquee_forever" />
+        </RelativeLayout>
+        <ImageView
+            android:id="@+id/play_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/play"
+            android:layout_marginBottom="20dp"/>
+        <LinearLayout
+            android:id="@+id/play_center_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_vertical">
+            <ImageView
+                android:id="@+id/preward_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/preward"
+                android:layout_marginRight="20dp"/>
+            <com.coolrandy.com.coolmusicplayer.view.CircleImageView
+                android:id="@+id/page_imageview"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:src="@mipmap/ic_launcher"
+                app:civ_border_width="4dp"
+                app:civ_border_color="#7E9E9E9E"/>
+            <ImageView
+                android:id="@+id/forward_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/forward"
+                android:layout_marginLeft="20dp"/>
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/seek_bar"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_marginTop="20dp"
+            android:max="100"
+            android:progressDrawable="@drawable/seek_bar_progress"
+            android:thumb="@drawable/seekbar_self_thumb"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:layout_marginRight="60dp"
+            android:layout_marginLeft="60dp"/>
+
     </LinearLayout>
     <!--加载视图-->
     <LinearLayout

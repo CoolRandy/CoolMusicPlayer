@@ -1,10 +1,13 @@
 package com.coolrandy.com.coolmusicplayer.activity;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -83,6 +86,29 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+
+                    case R.id.share:
+//                        if(item.getIcon().equals(ContextCompat.getDrawable(MainActivity.this, R.mipmap.share_unpressed))){
+//                        if(item.getIcon().equals(getResources().getDrawable(R.mipmap.share_unpressed))){
+//                            item.setIcon(R.mipmap.share_pressed);
+//                            Toast.makeText(MainActivity.this, "分享给你的小伙伴", Toast.LENGTH_SHORT).show();
+//                        }else if(item.getIcon().equals(getResources().getDrawable(R.mipmap.share_pressed))){
+//                            item.setIcon(R.mipmap.share_unpressed);
+//                            Toast.makeText(MainActivity.this, "取消分享", Toast.LENGTH_SHORT).show();
+//                        }
+                        Toast.makeText(MainActivity.this, "分享给你的小伙伴", Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        break;
+                }
+                return true;
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -228,8 +254,22 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Toast.makeText(this, "设置", Toast.LENGTH_SHORT).show();
             return true;
         }
+
+//        if(id == R.id.share){
+//
+//            if(item.getIcon().equals(ContextCompat.getDrawable(this, R.mipmap.share_unpressed))){
+//                item.setIcon(R.mipmap.share_unpressed);
+//                Toast.makeText(this, "取消分享", Toast.LENGTH_SHORT).show();
+//            }else {
+//                item.setIcon(R.mipmap.share_pressed);
+//                Toast.makeText(this, "分享给你的小伙伴", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }

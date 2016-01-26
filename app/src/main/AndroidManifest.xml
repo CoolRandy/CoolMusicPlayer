@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!--android设备防止休眠-->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -27,7 +29,11 @@
         <activity android:name=".activity.DownloadActivity"/>
         <activity android:name=".upload.UploadToServer"/>
         <activity android:name=".activity.AlbumInfoActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"/>
+        
+        <service android:name=".service.MusicService"/>
     </application>
 
 </manifest>
