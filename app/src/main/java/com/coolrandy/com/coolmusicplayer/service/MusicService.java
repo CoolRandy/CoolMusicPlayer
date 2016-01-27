@@ -9,7 +9,10 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
 
-import java.io.IOException;
+import com.coolrandy.com.coolmusicplayer.model.TrackBean;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by admin on 2016/1/26.
@@ -26,15 +29,42 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private final IBinder musicBind = new MusicBinder();
     //记录播放状态
     private boolean isPlaying = false;
+    //当前的播放位置
+    private int songPos;
+    //专辑歌曲列表
+    private ArrayList<TrackBean> trackBeans;
+    //随机播放标志
+    private boolean shuffle = false;
+    private Random random;
 
     @Override
     public void onCreate() {
         //create service
         super.onCreate();
+        //初始化pos为0
+        songPos = 0;
+        //创建随机实例
+        random = new Random();
         //创建mediaPlayer实例
         mediaPlayer = new MediaPlayer();
-
         initMusicPlayer();
+    }
+
+    /**
+     * 传递整个专辑列表
+     * @param trackBeans
+     */
+    public void setAlbumList(ArrayList<TrackBean> trackBeans){
+
+        this.trackBeans = trackBeans;
+    }
+
+    /**
+     * 传递当前播放单曲的url
+     * @param url
+     */
+    public void setTrackUrl(String url){
+        trackUrl = url;
     }
 
     /**
@@ -48,10 +78,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         mediaPlayer.setOnPreparedListener(this);
         mediaPlayer.setOnCompletionListener(this);
         mediaPlayer.setOnErrorListener(this);
-    }
-
-    public void setTrackUrl(String url){
-        trackUrl = url;
     }
 
     @Nullable
@@ -69,18 +95,23 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-
-        //start play
-        mediaPlayer.start();
+        //启动service之后，回调start play
+        mp.start();
+        //添加通知栏
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-
+        //check if playback has reached the end of track
+        if(mediaPlayer.getCurrentPosition() > 0){
+            mp.reset();
+            playNext();
+        }
     }
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
+        mp.reset();
         return false;
     }
 
@@ -108,6 +139,9 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 //        mediaPlayer.start();
     }
 
+    /**
+     * 暂停
+     */
     public void pauseSong(){
 
         isPlaying = false;
@@ -118,8 +152,70 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         return mediaPlayer.getDuration();
     }
+    //获取当前播放的位置
+    public int getPos(){
+        return mediaPlayer.getCurrentPosition();
+    }
 
     public boolean isPlaying(){
         return mediaPlayer.isPlaying();
+    }
+
+    public void seekTo(int pos){
+
+        mediaPlayer.seekTo(pos);
+    }
+
+    public void go(){
+        mediaPlayer.start();
+    }
+
+    /**
+     * 播放前一曲
+     */
+    public void playPrev(){
+
+        songPos--;
+        if(songPos < 0){//循环
+            songPos = trackBeans.size() - 1;
+        }
+        playSong();
+    }
+
+    /**
+     * 播放下一曲
+     */
+    public void playNext(){
+
+        if(shuffle){
+
+            int newSong = songPos;
+            while (newSong == songPos){
+                newSong = random.nextInt(trackBeans.size());
+            }
+            songPos = newSong;
+        }else if(songPos < trackBeans.size() - 1){
+            songPos++;
+        }else {
+            songPos = 0;
+        }
+        playSong();
+    }
+
+    /**
+     * 设置随机播放
+     * @param
+     */
+    public void setShuffle() {
+        if(shuffle){
+            shuffle = false;
+        }else {
+            shuffle = true;
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        stopForeground(true);
     }
 }

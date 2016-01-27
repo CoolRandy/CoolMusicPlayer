@@ -20,7 +20,8 @@
                 android:background="?attr/colorPrimary"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
                 app:title="炫酷音乐"
-                app:subtitle="享受属于你的时光"/>
+                app:subtitle="享受属于你的时光"
+                app:navigationIcon="@mipmap/menu"/>
 
         </android.support.design.widget.AppBarLayout>
 

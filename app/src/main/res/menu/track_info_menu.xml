@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!--android:orderInCategory设置menu的优先级，数字越小优先级越高
+        app:showAsAction设置menu的显示模式-->
+    <item android:id="@+id/action_shuffle"
+        android:title="@string/shuffle"
+        android:orderInCategory="100"
+        app:showAsAction="always"/>
+</menu>
