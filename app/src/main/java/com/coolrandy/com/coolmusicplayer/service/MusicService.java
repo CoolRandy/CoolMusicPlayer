@@ -8,6 +8,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.coolrandy.com.coolmusicplayer.model.TrackBean;
 
@@ -22,7 +23,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                                     , MediaPlayer.OnCompletionListener{
 
     //media player
-    private MediaPlayer mediaPlayer;
+    public MediaPlayer mediaPlayer;
     //播放音乐的url
     private String trackUrl;
     //binder
@@ -36,6 +37,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     //随机播放标志
     private boolean shuffle = false;
     private Random random;
+
+    private static final String ACTION_PLAY = "play";
 
     @Override
     public void onCreate() {
@@ -80,6 +83,15 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         mediaPlayer.setOnErrorListener(this);
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        if (intent.getAction().equals(ACTION_PLAY)){
+            playSong();
+        }
+        return 1;
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -96,6 +108,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public void onPrepared(MediaPlayer mp) {
         //启动service之后，回调start play
+        Log.e("TAG", "回调TrackBeans： " + trackBeans.toString());
         mp.start();
         //添加通知栏
     }
@@ -111,10 +124,15 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
+        // The MediaPlayer has moved to the Error state, must be reset!
+        //当错误发生时，MediaPlayer会转移到Error状态，所以必须调用reset
         mp.reset();
         return false;
     }
 
+    /**
+     * 数据通信的桥梁
+     */
     public class MusicBinder extends Binder{
 
         public MusicService getService(){
@@ -129,14 +147,17 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         isPlaying = true;
         mediaPlayer.reset();
+        Log.e("TAG", "trackBean size-->" + trackBeans.size());
+        //get song
+        TrackBean track = trackBeans.get(songPos);
         try {
-            mediaPlayer.setDataSource(trackUrl);
-//            mediaPlayer.prepare();
-            mediaPlayer.prepareAsync();
+            //实例化mediaPlayer，相当于绑定歌曲，则可以通过mediaPlayer获取歌曲播放长度
+            mediaPlayer.setDataSource(track.getStream());
         }catch (Exception e){
-            e.printStackTrace();
+            Log.e("TAG", "Error Setting Data Source");
         }
-//        mediaPlayer.start();
+        // prepare async to not block main thread
+        mediaPlayer.prepareAsync();
     }
 
     /**

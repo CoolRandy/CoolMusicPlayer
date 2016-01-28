@@ -5,6 +5,7 @@
         app:showAsAction设置menu的显示模式-->
     <item android:id="@+id/action_shuffle"
         android:title="@string/shuffle"
+        android:icon="@mipmap/shuffle"
         android:orderInCategory="100"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 </menu>

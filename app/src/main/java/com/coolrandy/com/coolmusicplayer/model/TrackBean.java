@@ -57,4 +57,10 @@ public class TrackBean implements Serializable {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    @Override
+    public String toString() {
+        return "id-->" + id + ", name-->" + name + ", duration-->" + duration
+                 + ", url-->" + url + ", stream-->" + stream;
+    }
 }

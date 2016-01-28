@@ -66,7 +66,7 @@ public class AlbumInfoActivity extends AppCompatActivity implements View.OnClick
     private ObjectAnimator objectAnimator;
 
     //音乐播放器
-    private MediaPlayer mediaPlayer;
+//    private MediaPlayer mediaPlayer;
     private double timeElapsed = 0, finalTime = 0;
     private int forwardTime = 2000, backwardTime = 2000;
     private Handler durationHandler = new Handler();
@@ -76,6 +76,8 @@ public class AlbumInfoActivity extends AppCompatActivity implements View.OnClick
     private MusicService musicService;
     private Intent playIntent;
     private boolean musicBound = false;
+
+    private static final String ACTION_PLAY = "play";
 
     //track详情
     private ArrayList<TrackBean> trackBeans = new ArrayList<>();
@@ -115,6 +117,7 @@ public class AlbumInfoActivity extends AppCompatActivity implements View.OnClick
             switch (msg.what){
                 case 100:
                     pos = setProgress();
+                    Log.e("TAG", "pos-->" + pos + ", mDragging-->" + mDragging + ", isPlaying-->" + isPlaying());
                     if(!mDragging && isPlaying()){
                         msg = obtainMessage(100);
                         sendMessageDelayed(msg, 1000 - (pos % 1000));
@@ -129,13 +132,13 @@ public class AlbumInfoActivity extends AppCompatActivity implements View.OnClick
         public void run() {
 
             //首先获取当前的播放位置
-            timeElapsed = mediaPlayer.getCurrentPosition();
+            timeElapsed = musicService.mediaPlayer.getCurrentPosition();
             //根据当前播放位置设置seekBar
-            seekbar.setProgress((int)timeElapsed);
+            progressBar.setProgress((int)timeElapsed);
             //设置剩余时间
             double timeRemining = finalTime - timeElapsed;
             //TODO 可以设置一个TextView实时显示剩余播放时间
-            durationHandler.postDelayed(this, 100);
+            mHandler.postDelayed(this, 100);
         }
     };
 
@@ -150,21 +153,11 @@ public class AlbumInfoActivity extends AppCompatActivity implements View.OnClick
         requestGetData(url);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if(null == playIntent){
-            playIntent = new Intent(this, MusicService.class);
-            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-            startService(playIntent);
-        }
-    }
-
     /**
      * 初始化view
      */
     private void initView(){
-
+        //设置toolbar
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,16 +182,18 @@ public class AlbumInfoActivity extends AppCompatActivity implements View.OnClick
             }
         });
         //实例化mediaPlayer
-        mediaPlayer = MediaPlayer.create(this, R.raw.star);
-        finalTime = mediaPlayer.getDuration();
+//        mediaPlayer = MediaPlayer.create(this, R.raw.star);
+//        finalTime = mediaPlayer.getDuration();
 
         //实例化seekBar
         progressBar = (ProgressBar)findViewById(R.id.seek_bar);
         if(progressBar != null){
             if(progressBar instanceof SeekBar){
                 seekbar = (SeekBar)progressBar;
+                seekbar.setClickable(true);
                 seekbar.setOnSeekBarChangeListener(seekBarChangeListener);
             }
+            //根据实际歌曲长度进行换算
             progressBar.setMax(1000);
         }
 
@@ -246,14 +241,17 @@ public class AlbumInfoActivity extends AppCompatActivity implements View.OnClick
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-
+            //通过binder与service建立通信连接，执行相应的操作
             MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
             //获取service
             musicService = binder.getService();
             //TODO 传递数据过去
             musicService.setAlbumList(trackBeans);
-            musicService.setTrackUrl(trackBeans.get(0).getStream());
             musicBound = true;
+
+//            musicService.playSong();
+//            setProgress();
+//            mHandler.postDelayed(updateSeekBarTime, 100);
         }
 
         @Override
@@ -263,18 +261,29 @@ public class AlbumInfoActivity extends AppCompatActivity implements View.OnClick
         }
     };
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(null == playIntent){
+            playIntent = new Intent(this, MusicService.class);
+            playIntent.setAction(ACTION_PLAY);
+            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+            startService(playIntent);
+        }
+    }
+
     /**
      * 设置进度
      * @return
      */
     private int setProgress(){
 
-        if(mediaPlayer == null || mDragging){
+        if(musicService.mediaPlayer == null || mDragging){
             return 0;
         }
 
-        int position = mediaPlayer.getCurrentPosition();
-        int duration = mediaPlayer.getDuration();
+        int position = musicService.mediaPlayer.getCurrentPosition();
+        int duration = musicService.mediaPlayer.getDuration();
         if(progressBar != null){
             if(duration > 0){
                 //采用long型，避免溢出
@@ -302,7 +311,7 @@ public class AlbumInfoActivity extends AppCompatActivity implements View.OnClick
                 return;
             }
 
-            long duration = mediaPlayer.getDuration();
+            long duration = musicService.mediaPlayer.getDuration();
             long newPosition = (duration * progress) / 1000L;
             seekTo((int)newPosition);
         }
@@ -342,9 +351,9 @@ public class AlbumInfoActivity extends AppCompatActivity implements View.OnClick
             return;
         }
         if(isPlaying()){
-            playImageView.setImageResource(R.mipmap.pause);
-        }else {
             playImageView.setImageResource(R.mipmap.play);
+        }else {
+            playImageView.setImageResource(R.mipmap.pause);
         }
     }
 
@@ -393,21 +402,20 @@ public class AlbumInfoActivity extends AppCompatActivity implements View.OnClick
                 if(isPlaying){
                     playImageView.setImageResource(R.mipmap.pause);
                     isPlaying = false;
-//                    pause();
                     musicService.pauseSong();
-                    //TODO 保存暂停状态，下次重新从暂停处开始
-//                    circleImageView.clearAnimation();
-//                    operatingAnim.setFillAfter(true);
-//                    operatingAnim.cancel();
+//                    setProgress();
+//                    mHandler.sendEmptyMessage(100);
                     objectAnimator.pause();
                     Toast.makeText(this, "暂停", Toast.LENGTH_SHORT).show();
                 }else {
                     playImageView.setImageResource(R.mipmap.play);
                     isPlaying = true;
-//                    play();
                     musicService.playSong();
+                    //更新进度
+//                    setProgress();
+//                    mHandler.sendEmptyMessage(100);
+                    mHandler.postDelayed(updateSeekBarTime, 100);
                     if(objectAnimator != null) {
-//                        circleImageView.startAnimation(objectAnimator);
                         objectAnimator.resume();
                     }
                     Toast.makeText(this, "播放", Toast.LENGTH_SHORT).show();
@@ -416,10 +424,14 @@ public class AlbumInfoActivity extends AppCompatActivity implements View.OnClick
             case R.id.preward_play://TODO 其实这里可以做一个监听器
                 //上一曲
                 playPrev();
+//                setProgress();
+                mHandler.sendEmptyMessage(100);
                 break;
             case R.id.forward_play:
                 //下一曲
                 playNext();
+//                setProgress();
+                mHandler.sendEmptyMessage(100);
                 break;
             default:
                 break;
@@ -461,7 +473,7 @@ public class AlbumInfoActivity extends AppCompatActivity implements View.OnClick
                 final String res = response.body().string();
                 Log.e("TAG", "res--->" + res);
                 trackBeans = new Gson().fromJson(res, new TypeToken<List<TrackBean>>() {}.getType());
-
+                Log.e("TAG", "trackBeans: " + trackBeans.toString());
                 if (null == res) {
                     stopAnim();
                     return;
@@ -571,6 +583,12 @@ public class AlbumInfoActivity extends AppCompatActivity implements View.OnClick
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+        switch (item.getItemId()){
+
+            case R.id.action_shuffle:
+                musicService.setShuffle();
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 
