@@ -51,6 +51,8 @@ import butterknife.InjectView;
  * Created by admin on 2016/1/22.  这里不采用MediaController，该接口类呈现一个标准的接口，包含暂停、前进、后退
  * 专辑详情页
  */
+
+//TODO 关于播放处理还有问题，需后期完善
 public class AlbumInfoActivity extends AppCompatActivity implements View.OnClickListener, MediaPlayerControl{
 
     private static final String ALBUM_ID = "album_id";
@@ -132,7 +134,9 @@ public class AlbumInfoActivity extends AppCompatActivity implements View.OnClick
         public void run() {
 
             //首先获取当前的播放位置
-            timeElapsed = musicService.mediaPlayer.getCurrentPosition();
+            if(musicService != null && musicService.mediaPlayer != null) {
+                timeElapsed = musicService.mediaPlayer.getCurrentPosition();
+            }
             //根据当前播放位置设置seekBar
             progressBar.setProgress((int)timeElapsed);
             //设置剩余时间

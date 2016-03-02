@@ -53,6 +53,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
 
     public void setAlbumList(List<AlbumBean> albumList){
         albumBeans = albumList;
+        Log.e("TAG", "albumBeans: " + albumBeans);
         //可以采用一些新的数据更新的方法，会有一些动画
         notifyDataSetChanged();
     }

@@ -19,10 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.OkHttpStack;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.coolrandy.com.coolmusicplayer.AlbumAdapter;
 import com.coolrandy.com.coolmusicplayer.R;
@@ -34,7 +31,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
@@ -42,11 +38,8 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Response;
 
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -82,11 +75,11 @@ public class MainActivity extends AppCompatActivity {
             super.handleMessage(msg);
             Log.e("TAG", "receive data");
             if(msg.what == REFRESHDATA){
-                List<AlbumBean> albumTrackList = (List <AlbumBean>)msg.obj;
-                for(AlbumBean track: albumTrackList){
+                albumBeans = (List <AlbumBean>)msg.obj;
+                for(AlbumBean track: albumBeans){
                     Log.e("TAG", "track id:" + track);
                 }
-                albumAdapter.setAlbumList(albumTrackList);
+                albumAdapter.setAlbumList(albumBeans);
             }
         }
     };
@@ -162,6 +155,8 @@ public class MainActivity extends AppCompatActivity {
 
                 Toast.makeText(MainActivity.this, "点击专辑item", Toast.LENGTH_SHORT).show();
                 if (albumBeans != null) {
+                    Log.e("TAG", "albumBeans: " + albumBeans);
+                    Log.e("TAG", "albumBeans size: " + albumBeans.size());
                     Log.e("TAG", "album id-->" + albumBeans.get(position).getId());
                     Intent intent = new Intent(MainActivity.this, AlbumInfoActivity.class);
                     intent.putExtra(ALBUM_ID, albumBeans.get(position).getId());
@@ -248,11 +243,6 @@ public class MainActivity extends AppCompatActivity {
                         albumAdapter.setAlbumList(albumBeans);
                     }
                 });
-
-//                Message msg = new Message();
-//                msg.what = REFRESHDATA;
-//                msg.obj = albumBeans;
-//                mHandler.sendMessage(msg);
             }
 
             @Override

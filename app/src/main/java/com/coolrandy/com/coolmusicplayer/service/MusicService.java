@@ -147,6 +147,9 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
         isPlaying = true;
         mediaPlayer.reset();
+        if(null == trackBeans){
+            return;
+        }
         Log.e("TAG", "trackBean size-->" + trackBeans.size());
         //get song
         TrackBean track = trackBeans.get(songPos);
