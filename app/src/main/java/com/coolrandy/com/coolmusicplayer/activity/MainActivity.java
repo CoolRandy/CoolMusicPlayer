@@ -18,17 +18,28 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.OkHttpStack;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.coolrandy.com.coolmusicplayer.AlbumAdapter;
 import com.coolrandy.com.coolmusicplayer.R;
 import com.coolrandy.com.coolmusicplayer.model.AlbumBean;
+import com.coolrandy.com.coolmusicplayer.utils.HttpUtils;
+import com.coolrandy.com.coolmusicplayer.utils.RequestCallBack;
 import com.coolrandy.com.coolmusicplayer.view.AVLoadingIndicatorView;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Response;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String ALBUM_PAGE = "album_page";
     private List<AlbumBean> albumBeans = new ArrayList<>();
 
-
+    private RequestQueue requestQueue;
     private OkHttpClient okHttpClient;
     private Request request;
     @InjectView(R.id.recycler_view)
@@ -123,6 +134,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        requestQueue = Volley.newRequestQueue(this, new OkHttpStack());
+
+
         //创建默认的线性LayoutManager  通过布局管理器LayoutManager控制显示方式
         //可以通过线性布局管理器查找第一个可见的item或最后可见的item
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -172,7 +186,8 @@ public class MainActivity extends AppCompatActivity {
 
         okHttpClient = new OkHttpClient();
         startAnim();
-        requestGetData(url);
+//        requestGetData(url);
+        requestWithVolley(url);
 
     }
 
@@ -211,11 +226,12 @@ public class MainActivity extends AppCompatActivity {
                 });
                 String res = response.body().string();
                 Log.e("TAG", "res--->" + res);
-                if(null == res){
+                if (null == res) {
                     stopAnim();
                     return;
                 }
-                albumBeans = new Gson().fromJson(res, new TypeToken<List<AlbumBean>>(){}.getType());
+                albumBeans = new Gson().fromJson(res, new TypeToken<List<AlbumBean>>() {
+                }.getType());
                 Log.e("TAG", "albumBeans--->" + albumBeans.toString());
                 runOnUiThread(new Runnable() {
                     @Override
@@ -240,6 +256,43 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    private RequestCallBack requestCallBack;
+
+    public void requestWithVolley(String url){
+
+        requestCallBack = new RequestCallBack() {
+            @Override
+            public void onFail(Exception e) {
+                startAnim();
+                Toast.makeText(getApplicationContext(), "网络连接失败", Toast.LENGTH_SHORT).show();
+            }
+
+
+            @Override
+            public <T> void onSuccess(ArrayList<T> objects) {
+                stopAnim();
+                if(null == objects){
+                    Log.e("TAG", "objects: " + objects);
+                    return;
+                }
+                Log.e("TAG", "callback successed!");
+
+                for (Object object: objects){
+                    albumBeans.add((AlbumBean)object);
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        albumAdapter.setAlbumList(albumBeans);
+                    }
+                });
+            }
+        };
+        startAnim();
+        HttpUtils.get(url, AlbumBean.class, requestCallBack, requestQueue, 50000);
     }
 
     @Override

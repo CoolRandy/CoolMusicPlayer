@@ -12,7 +12,7 @@ import java.net.URL;
  */
 public class OkHttpStack extends HurlStack {
 
-    private OkHttpClient okHttpClient;
+    private final OkHttpClient okHttpClient;
 
     public OkHttpStack(){
 
@@ -20,6 +20,9 @@ public class OkHttpStack extends HurlStack {
     }
 
     public OkHttpStack(OkHttpClient okHttpClient){
+        if (okHttpClient == null) {
+            throw new NullPointerException("Client must not be null.");
+        }
         this.okHttpClient = okHttpClient;
     }
 
