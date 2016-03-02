@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -28,9 +29,9 @@ public class HttpUtils {
     private static final String NET_TAG = "net_tag";
 
 
-    /*public static <T> void get(String url,final Class<T> bean, final RequestCallBack callback, RequestQueue requestQueue, int connectTimeout){
+    public static <T> void get(String url,final Class<T> bean, final RequestCallBack callback, RequestQueue requestQueue, int connectTimeout){
         try {
-            Log.i(NET_TAG, "*//***********************网络请求 start************************//*");
+            Log.i(NET_TAG, "**********************网络请求 start***********************");
             Log.i(NET_TAG, "请求方式--Get");
             //处理url参数  这里不需要额外处理
             //url = urlGetParam(urlParam, url);
@@ -39,7 +40,7 @@ public class HttpUtils {
                 @Override
                 public void onResponse(String response) {
                     Log.i(NET_TAG, "onResponse:" + response);
-                    Log.i(NET_TAG, "*//***********************网络请求 end success ************************//*");
+                    Log.i(NET_TAG, "**********************网络请求 end success ***********************");
 
                     Object responseBeanObject = null;
                     try {
@@ -66,7 +67,7 @@ public class HttpUtils {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.e(NET_TAG, "onErrorResponse:" + error.toString());
-                    Log.i(NET_TAG, "*//***********************网络请求 end fail************************//*");
+                    Log.i(NET_TAG, "**********************网络请求 end fail***********************");
                     error.printStackTrace();
                     if (callback != null) {
                         callback.onFail(error);
@@ -84,7 +85,7 @@ public class HttpUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }*/
+    }
 
     /**
      * get 处理url参数
@@ -127,7 +128,7 @@ public class HttpUtils {
         return url;
     }
 
-    public static <T> void get(String url, final Class<T> bean, final RequestCallBack callback, RequestQueue requestQueue, int connectTimeout){
+    public static <T> void get(String url, final RequestCallBack callback, RequestQueue requestQueue, int connectTimeout){
         try {
             Log.i(NET_TAG, "/***********************网络请求 start************************/");
             Log.i(NET_TAG, "请求方式--Get");
@@ -144,25 +145,6 @@ public class HttpUtils {
                         return;
                     }
 
-                    Gson gson = new Gson();
-                    JsonParser parser = new JsonParser();
-                    JsonArray jsonArray = parser.parse(response).getAsJsonArray();
-                    ArrayList<AlbumBean> albumBeans = new ArrayList<>();
-                    for (JsonElement obj: jsonArray){
-                        AlbumBean albumBean = (AlbumBean)gson.fromJson(obj, bean);
-                        albumBeans.add(albumBean);
-                        Log.e("TAG", "albumBean: " + albumBean.toString());
-                    }
-//                    List<AlbumBean> albumBeans = null;
-//                    try {
-//                        //TODO 可以看到这里采用的是Gson来解析
-//                        albumBeans = new Gson().fromJson(response, new TypeToken<AlbumBean>() {
-//                        }.getType());
-//                        Log.e("TAG", "albumBeans:  " + albumBeans.toString());
-//                    } catch (JsonSyntaxException e) {
-//                        e.printStackTrace();
-//                    }
-
                     if (response == null) {
                         if (callback != null) {
                             callback.onFail(new VolleyError());
@@ -170,7 +152,7 @@ public class HttpUtils {
                         }
                     }
                     if (callback != null) {
-                        callback.onSuccess(albumBeans);
+                        callback.onSuccess(response);
                     }
 
                 }

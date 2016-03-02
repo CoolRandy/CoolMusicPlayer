@@ -13,7 +13,7 @@ public interface RequestCallBack {
     public void onFail(Exception e);
 
 //    public <T> void onSuccess(List<Class<T>> list);
-//    public void onSuccess(String response);
-//    public void onSuccess(Object response);
-    public <T> void onSuccess(ArrayList<T> objects);
+    public void onSuccess(String response);
+    public void onSuccess(Object response);
+//    public <T> void onSuccess(ArrayList<T> objects);
 }

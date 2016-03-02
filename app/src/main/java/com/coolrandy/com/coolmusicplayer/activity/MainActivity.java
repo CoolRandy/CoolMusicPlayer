@@ -31,6 +31,9 @@ import com.coolrandy.com.coolmusicplayer.utils.HttpUtils;
 import com.coolrandy.com.coolmusicplayer.utils.RequestCallBack;
 import com.coolrandy.com.coolmusicplayer.view.AVLoadingIndicatorView;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.Call;
@@ -43,6 +46,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -74,14 +78,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-
-            if(msg.what == 10){
-                /*List<AlbumBean> albumTrackList = (List <AlbumBean>)msg.obj;
+            Log.e("TAG", "receive data");
+            if(msg.what == REFRESHDATA){
+                List<AlbumBean> albumTrackList = (List <AlbumBean>)msg.obj;
                 for(AlbumBean track: albumTrackList){
-                    textView.setText(track.toString());
-                    textView.setText("\n");
-                }*/
-//                textView.setText(albumBeans.toString());
+                    Log.e("TAG", "track id:" + track);
+                }
+                albumAdapter.setAlbumList(albumTrackList);
             }
         }
     };
@@ -269,26 +272,27 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "网络连接失败", Toast.LENGTH_SHORT).show();
             }
 
+            @Override
+            public void onSuccess(String response) {
+                stopAnim();
+                Gson gson = new Gson();
+                JsonParser parser = new JsonParser();
+                JsonArray jsonArray = parser.parse(response).getAsJsonArray();
+                ArrayList<AlbumBean> albumBeans = new ArrayList<>();
+                for (JsonElement obj: jsonArray){
+                    AlbumBean albumBean = gson.fromJson(obj, AlbumBean.class);
+                    albumBeans.add(albumBean);
+                    Log.e("TAG", "albumBean: " + albumBean.toString());
+                }
+                Message msg = new Message();
+                msg.what = REFRESHDATA;
+                msg.obj = albumBeans;
+                mHandler.sendMessage(msg);
+            }
 
             @Override
-            public <T> void onSuccess(ArrayList<T> objects) {
-                stopAnim();
-                if(null == objects){
-                    Log.e("TAG", "objects: " + objects);
-                    return;
-                }
-                Log.e("TAG", "callback successed!");
-
-                for (Object object: objects){
-                    albumBeans.add((AlbumBean)object);
-                }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        albumAdapter.setAlbumList(albumBeans);
-                    }
-                });
+            public void onSuccess(Object response) {
+                //TODO
             }
         };
         startAnim();
