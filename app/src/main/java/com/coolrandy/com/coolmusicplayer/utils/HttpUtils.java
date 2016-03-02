@@ -7,16 +7,11 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.coolrandy.com.coolmusicplayer.model.AlbumBean;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -140,10 +135,6 @@ public class HttpUtils {
                 public void onResponse(String response) {
                     Log.i(NET_TAG, "onResponse:" + response);
                     Log.i(NET_TAG, "/***********************网络请求 end success ************************/");
-
-                    if(null == response){
-                        return;
-                    }
 
                     if (response == null) {
                         if (callback != null) {

@@ -74,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
     @InjectView(R.id.load_layout)
     public LinearLayout linearLayout;
 
+    private boolean reqWithVolley = true;
+
     private android.os.Handler mHandler = new android.os.Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -159,11 +161,13 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(View view, int position) {
 
                 Toast.makeText(MainActivity.this, "点击专辑item", Toast.LENGTH_SHORT).show();
-                Log.e("TAG", "album id-->" + albumBeans.get(position).getId());
-                Intent intent = new Intent(MainActivity.this, AlbumInfoActivity.class);
-                intent.putExtra(ALBUM_ID, albumBeans.get(position).getId());
-                intent.putExtra(ALBUM_PAGE, albumBeans.get(position).getImage());
-                startActivity(intent);
+                if (albumBeans != null) {
+                    Log.e("TAG", "album id-->" + albumBeans.get(position).getId());
+                    Intent intent = new Intent(MainActivity.this, AlbumInfoActivity.class);
+                    intent.putExtra(ALBUM_ID, albumBeans.get(position).getId());
+                    intent.putExtra(ALBUM_PAGE, albumBeans.get(position).getImage());
+                    startActivity(intent);
+                }
             }
         });
         recyclerView.setAdapter(albumAdapter);
@@ -189,9 +193,11 @@ public class MainActivity extends AppCompatActivity {
 
         okHttpClient = new OkHttpClient();
         startAnim();
-//        requestGetData(url);
-        requestWithVolley(url);
-
+        if(reqWithVolley){
+            requestWithVolley(url);
+        }else {
+            requestGetData(url);
+        }
     }
 
     public void startAnim(){
@@ -296,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         startAnim();
-        HttpUtils.get(url, AlbumBean.class, requestCallBack, requestQueue, 50000);
+        HttpUtils.get(url, requestCallBack, requestQueue, 50000);
     }
 
     @Override
