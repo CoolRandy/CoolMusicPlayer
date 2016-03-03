@@ -34,6 +34,7 @@
             android:launchMode="singleTop"/>
         
         <service android:name=".service.MusicService"/>
+        <activity android:name=".activity.TestActivity"/>
     </application>
 
 </manifest>

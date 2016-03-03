@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -213,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
      * @param url
      */
     public void requestGetData(String url){
+        //默认请求method：GET
         request = new Request.Builder()
                 .url(url)
                 .build();
@@ -271,6 +273,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String response) {
                 stopAnim();
+                //数组中包含多个对象的情况
                 Gson gson = new Gson();
                 JsonParser parser = new JsonParser();
                 JsonArray jsonArray = parser.parse(response).getAsJsonArray();
